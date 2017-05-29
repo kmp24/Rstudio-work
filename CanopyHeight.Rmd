@@ -4,12 +4,6 @@ author: "K Perham"
 date: "May 2017"
 output: html_document
 ---
----
-title: "Calculating Canopy Height"
-author: "K Perham"
-date: "May 22, 2017"
-output: html_document
----
 
 ```{r setup, include=FALSE}
 ```
