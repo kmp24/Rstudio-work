@@ -1,0 +1,33 @@
+---
+title: "Cropping a Raster"
+author: "K Perham"
+date: "May 28, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r echo=FALSE}
+library(raster)
+library(rgdal)
+```
+
+```{r echo=FALSE}
+lidar_chm <- raster("data/week3/BLDR_LeeHill/outputs/lidar_chm.tif")
+plot(lidar_chm,
+     col=rev(terrain.colors(50)))
+```
+```{r echo=FALSE}
+crop_extent <- readOGR("data/week3/BLDR_LeeHill",
+                       "clip-extent")
+plot(crop_extent,
+     main="Shapefile imported into R - crop extent",
+     axes=T,
+     border="blue")
+lidar_chm_crop <- crop(lidar_chm, crop_extent)
+plot(lidar_chm_crop, main="Cropped lidar chm")
+plot(crop_extent, add=T)
+```
