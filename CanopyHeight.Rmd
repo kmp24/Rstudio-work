@@ -1,0 +1,94 @@
+---
+title: "Canopy Height Model"
+author: "K Perham"
+date: "May 2017"
+output: html_document
+---
+---
+title: "Calculating Canopy Height"
+author: "K Perham"
+date: "May 22, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+```
+```{r include=FALSE}
+library(raster)
+library(rgdal)
+library(dplyr)
+```
+## Gathering and plotting DTM and DSM files
+
+This exercise to create a Canopy Height Model first calls for the DTM and DSM files to be retrieved and plotted:
+
+```{r echo=FALSE}
+lidar_dem <- raster(x="c:/users/kaitlyn/documents/earth-analytics/data/week3/BLDR_LeeHill/pre-flood/lidar/pre_DTM.tif")
+```
+
+```{r echo=FALSE}
+plot(lidar_dem,
+     main="Lidar Digital Elevation Model (DEM)")
+```
+```{r echo=FALSE}
+lidar_dsm <- raster(x="c:/users/kaitlyn/documents/earth-analytics/data/week3/BLDR_LeeHill/pre-flood/lidar/pre_DSM.tif")
+```
+
+```{r echo=FALSE}
+plot(lidar_dsm,
+     main="Lidar Digital Surface Model (DSM)")
+```
+
+Now that we have gathered both rasters, the CHM calculation is simple in r:
+```{r echo=TRUE}
+lidar_chm <- lidar_dsm - lidar_dem
+```
+The resulting plot looks like this:
+```{r echo=FALSE}
+plot(lidar_chm,
+     main="Lidar Canopy Height Model (CHM)")
+```
+Breaks can be created to improve the visualization.
+
+```{r echo=FALSE}
+plot(lidar_chm,
+     breaks = c(0, 2, 10, 20, 30),
+     main="Lidar Canopy Height Model",
+     col=c("white","brown","springgreen","darkgreen"))
+```
+
+And finally, a histogram of the data, eliminating the outliers to get a better idea of the distribution of values.
+
+```{r echo=FALSE}
+hist(lidar_chm,
+     xlim=c(2,25),
+     ylim=c(0,4000),
+     main="Histogram of canopy height model differences \nZoomed in to -2 to 2 on the x axis",
+     col="springgreen")
+```
+```{r echo=FALSE}
+reclass_df <- c(0, 2, NA,
+              2, 4, 1,
+             4, 7, 2,
+             7, Inf, 3)
+reclass_m <- matrix(reclass_df,
+                ncol=3,
+                byrow=TRUE)
+```
+We can reclassify the raster into short, medium, and tall trees. It's interesting to see how much more visible human habitation is in this plot, just based on tree height values. 
+```{r include=FALSE}
+chm_classified <- reclassify(lidar_chm,
+                     reclass_m)
+chm_classified[chm_classified==0] <- NA
+```
+```{r echo=FALSE}
+plot(chm_classified,
+     legend=F,
+     col=c("red", "blue", "green"), axes=F,
+     main="Classified Canopy Height Model \n short, medium, tall trees")
+legend("topright",
+       legend = c("short trees", "medium trees", "tall trees"),
+       fill = c("red", "blue", "green"),
+       border = F,
+       bty="n") 
+```
