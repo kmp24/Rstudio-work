@@ -5,7 +5,10 @@ date: "May 2017"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "images/"
+)
 ```
 ```{r include=FALSE}
 library(raster)
